@@ -1,15 +1,15 @@
 use crate::{
-    ast::statement::{Block, FnParam, Statement},
+    ast::statement::{Block, Statement, VarDecl},
     describe, ensure, impl_ast,
     parser::Rule,
 };
 
-impl_ast! {FnParam => pair {
+impl_ast! {VarDecl => pair {
     ensure!(pair, Rule::fn_param);
 
     let mut inner = pair.into_inner();
 
-    Ok(FnParam {
+    Ok(VarDecl {
         type_: inner.next().unwrap().try_into()?,
         name: inner.next().unwrap().try_into()?
     })
@@ -32,6 +32,13 @@ impl_ast! {Statement; inner;
             name: inner.next().unwrap().try_into()?,
             params: describe!(inner.next().unwrap().into_inner()),
             body: describe!(?inner)
+        })
+    }
+
+    Rule::struct_decl => {
+        Ok(Statement::StructDeclaration {
+            name: inner.next().unwrap().try_into()?,
+            fields: describe!(inner)
         })
     }
 }

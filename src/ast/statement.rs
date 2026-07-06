@@ -4,7 +4,7 @@ use crate::ast::primitives::{Identifier, TypeExpr};
 pub struct Block(pub Vec<Statement>);
 
 #[derive(Debug, Clone)]
-pub struct FnParam {
+pub struct VarDecl {
     pub type_: TypeExpr,
     pub name: Identifier,
 }
@@ -14,7 +14,12 @@ pub enum Statement {
     FunctionDeclaration {
         return_type: TypeExpr,
         name: Identifier,
-        params: Vec<FnParam>,
+        params: Vec<VarDecl>,
         body: Option<Block>,
+    },
+
+    StructDeclaration {
+        name: Identifier,
+        fields: Vec<VarDecl>,
     },
 }

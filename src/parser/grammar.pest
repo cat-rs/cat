@@ -78,11 +78,16 @@ type_expr = {
 // STATEMENTS
 // ------------------------------------------------------
 statement = {
-    fn_decl
+    module_statement
 }
 
 block = {
     "{" ~ statement* ~ "}"
+}
+
+module_statement = _{
+    fn_decl
+  | struct_decl
 }
 
 // ------------------------------------------------------
@@ -98,3 +103,9 @@ fn_params = {
 }
 
 fn_decl = { type_expr ~ identifier ~ "(" ~ fn_params ~ ")" ~ (";" | block) }
+
+// ------------------------------------------------------
+// STRUCT
+// ------------------------------------------------------
+
+struct_decl = { "struct" ~ identifier ~ "{" ~ (fn_param ~ ";")* ~ "}" }
