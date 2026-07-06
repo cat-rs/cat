@@ -1,0 +1,89 @@
+// Program
+program = { SOI ~ statement ~ EOI }
+
+keyword = {
+    "fn"
+}
+
+static_path = {
+    identifier ~ ("::" ~ identifier)*
+}
+
+// ------------------------------------------------------
+// PRIMITIVES
+// ------------------------------------------------------
+
+identifier = @{
+    !(keyword ~ !(ASCII_ALPHANUMERIC | "_")) ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")*
+}
+
+integer = @{ ASCII_DIGIT+ }
+
+float = @{
+    ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+
+}
+
+boolean = {
+    "true"
+  | "false"
+}
+
+string_lit = {
+    "\"" ~ inner_str ~ "\""
+}
+
+inner_str = @{
+    (!"\"" ~ ("\\\"" | ANY))*
+}
+
+// ------------------------------------------------------
+// TYPES
+// ------------------------------------------------------
+tuple_type = {
+    "(" ~ (type_expr ~ ("," ~ type_expr)*)? ~ ","? ~ ")"
+}
+
+path_type = {
+    static_path
+}
+
+ptr_type = {
+    "*"
+}
+
+ref_type = {
+    "&"
+}
+
+fn_type = {
+    "(" ~ (type_expr ~ ("," ~ type_expr)*)? ~ ")"
+}
+
+array_type = {
+    "[" ~ integer? ~ "]"
+}
+
+type_expr = {
+    path_type ~ (ptr_type | ref_type | fn_type | array_type)*
+}
+
+// ------------------------------------------------------
+// STATEMENTS
+// ------------------------------------------------------
+statement = {
+    fn_decl
+}
+
+block = {
+    "{" ~ statement* ~ "}"
+}
+
+// ------------------------------------------------------
+// FUNCTION
+// ------------------------------------------------------
+
+fn_params = _{
+    (type_expr ~ identifier)+ ~ ","?
+}
+
+fn_decl = { type_expr ~ identifier ~ "(" ~ fn_params? ~ ")" ~ (";" | block) }
