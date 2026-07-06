@@ -1,5 +1,7 @@
 use crate::{
-    ast::primitives::{Identifier, Path, TypeExpr}, describe, ensure, impl_ast, parser::Rule,
+    ast::primitives::{Identifier, Path, TypeExpr},
+    describe, ensure, impl_ast,
+    parser::Rule,
 };
 
 impl_ast! {Identifier => pair {
