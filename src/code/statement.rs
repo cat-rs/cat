@@ -10,7 +10,7 @@ impl Generate for Block {
             "{"
                 /i+
                 for stmt in (&self.0) {
-                    #stmt "\n"
+                    /i #stmt "\n"
                 }
                 /i-
             "}"
@@ -35,7 +35,7 @@ impl Generate for Statement {
                 params,
                 body,
             } => {
-                generate!(cg, #return_type /s #name "(" for (i, param) in (params.iter().enumerate()) {
+                generate!(cg, #return_type " " #name "(" for (i, param) in (params.iter().enumerate()) {
                     if (i > 0) {
                         ", "
                     }

@@ -28,18 +28,8 @@ impl CodeGen {
         self.output.push_str(s);
     }
 
-    pub fn addln(&mut self, s: &str) {
-        self.add(s);
-        self.add("\n");
-    }
-
     pub fn add_indented(&mut self, s: &str) {
         let line = format!("{}{}", self.indent_str(), s);
-        self.add(&line);
-    }
-
-    pub fn add_indentedln(&mut self, s: &str) {
-        let line = format!("{}{}\n", self.indent_str(), s);
         self.add(&line);
     }
 
@@ -111,16 +101,6 @@ macro_rules! generate {
             $crate::generate!($cg, $($inner)*);
         }
 
-        $crate::generate!($cg, $($rest)*);
-    }};
-
-    ($cg:expr, /n $($rest:tt)*) => {{
-        $cg.addln("");
-        $crate::generate!($cg, $($rest)*);
-    }};
-
-    ($cg:expr, /s $($rest:tt)*) => {{
-        $cg.add(" ");
         $crate::generate!($cg, $($rest)*);
     }};
 
