@@ -5,7 +5,7 @@ use crate::{
 };
 
 impl_ast! {VarDecl => pair {
-    ensure!(pair, Rule::fn_param);
+    ensure!(pair, Rule::var_decl);
 
     let mut inner = pair.into_inner();
 

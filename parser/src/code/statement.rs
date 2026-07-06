@@ -7,7 +7,7 @@ use crate::{
 impl Generate for Block {
     fn generate(&self, cg: &mut CodeGen) {
         generate!(cg,
-            "{"
+            "{\n"
                 /i+
                 for stmt in (&self.0) {
                     /i #stmt "\n"
