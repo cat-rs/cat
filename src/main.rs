@@ -1,4 +1,5 @@
 mod ast;
+mod code;
 mod parser;
 
 fn main() {
