@@ -1,4 +1,5 @@
 pub mod primitives;
+pub mod statement;
 
 use crate::ast::statement::Statement;
 
@@ -7,8 +8,8 @@ pub trait Generate {
 }
 
 pub struct CodeGen {
-    output: String,
-    indent: usize,
+    pub output: String,
+    pub indent: usize,
 }
 
 impl CodeGen {
@@ -49,10 +50,67 @@ impl CodeGen {
     }
 }
 
+impl<T: Generate> Generate for Option<T> {
+    fn generate(&self, cg: &mut CodeGen) {
+        if let Some(v) = self {
+            v.generate(cg);
+        }
+    }
+}
+
 #[macro_export]
 macro_rules! generate {
     ($cg:expr, #$($i:ident).+ $($rest:tt)*) => {{
         $($i).*.generate($cg);
+        $crate::generate!($cg, $($rest)*);
+    }};
+
+    ($cg:expr, gen $b:block $($rest:tt)*) => {{
+        $b
+
+        $crate::generate!($cg, $($rest)*);
+    }};
+
+    ($cg:expr, if (let $pat:pat = $expr:expr) { $($inner:tt)* } else { $($else:tt)* } $($rest:tt)*) => {{
+        if let $pat = $expr {
+            generate!($cg, $($inner)*);
+        } else {
+            generate!($cg, $($else)*);
+        }
+        generate!($cg, $($rest)*);
+    }};
+
+    ($cg:expr, if ($e:expr) { $($inner:tt)* } else { $($else:tt)* }  $($rest:tt)*) => {{
+        if $e {
+            $crate::generate!($cg, $($inner)*);
+        } else {
+            generate!($cg, $($else)*);
+        }
+
+        $crate::generate!($cg, $($rest)*);
+    }};
+
+    ($cg:expr, if (let $pat:pat = $expr:expr) { $($inner:tt)* } $($rest:tt)*) => {{
+        if let $pat = $expr {
+            generate!($cg, $($inner)*);
+        }
+
+        generate!($cg, $($rest)*);
+    }};
+
+    ($cg:expr, if ($e:expr) { $($inner:tt)* }  $($rest:tt)*) => {{
+        if $e {
+            $crate::generate!($cg, $($inner)*);
+        }
+
+        $crate::generate!($cg, $($rest)*);
+    }};
+
+    ($cg:expr, for $p:pat in ($e:expr) { $($inner:tt)* } $($rest:tt)*) => {{
+        for $p in $e {
+            $crate::generate!($cg, $($inner)*);
+        }
+
         $crate::generate!($cg, $($rest)*);
     }};
 
@@ -66,13 +124,23 @@ macro_rules! generate {
         $crate::generate!($cg, $($rest)*);
     }};
 
+    ($cg:expr, /i+ $($rest:tt)*) => {{
+        $cg.indent += 1;
+        $crate::generate!($cg, $($rest)*);
+    }};
+
+    ($cg:expr, /i- $($rest:tt)*) => {{
+        $cg.indent -= 1;
+        $crate::generate!($cg, $($rest)*);
+    }};
+
     ($cg:expr, /i $($rest:tt)*) => {{
         $cg.add_indented("");
         $crate::generate!($cg, $($rest)*);
     }};
 
-    ($cg:expr, $t:tt $($rest:tt)*) => {{
-        $cg.add(&stringify!($t));
+    ($cg:expr, $s:literal $($rest:tt)*) => {{
+        $cg.add($s);
         $crate::generate!($cg, $($rest)*);
     }};
 

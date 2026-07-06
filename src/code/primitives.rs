@@ -28,8 +28,8 @@ impl Generate for TypeExpr {
             TypeExpr::Array(t, _) => t.generate(cg),
             TypeExpr::Fn(t, _) => t.generate(cg),
             TypeExpr::Path(p) => p.generate(cg),
-            TypeExpr::Ptr(t) => generate!(cg, #t*),
-            TypeExpr::Ref(t) => generate!(cg, #t&),
+            TypeExpr::Ptr(t) => generate!(cg, #t "*"),
+            TypeExpr::Ref(t) => generate!(cg, #t "&"),
         }
     }
 }
