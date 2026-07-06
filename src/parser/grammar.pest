@@ -5,7 +5,7 @@ keyword = {
     "fn"
 }
 
-static_path = {
+path = {
     identifier ~ ("::" ~ identifier)*
 }
 
@@ -44,7 +44,7 @@ tuple_type = {
 }
 
 path_type = {
-    static_path
+    path
 }
 
 ptr_type = {
