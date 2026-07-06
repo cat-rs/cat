@@ -1,12 +1,12 @@
 use crate::ast::primitives::{Identifier, TypeExpr};
 
 #[derive(Debug, Clone, Default)]
-pub struct Block(Vec<Statement>);
+pub struct Block(pub Vec<Statement>);
 
 #[derive(Debug, Clone)]
 pub struct FnParam {
-    type_: TypeExpr,
-    name: Identifier,
+    pub type_: TypeExpr,
+    pub name: Identifier,
 }
 
 #[derive(Debug, Clone)]

@@ -4,7 +4,7 @@ pub mod statement;
 #[macro_export]
 macro_rules! describe {
     (? $e:expr) => {
-        $e.next().map(TryInto::try_into).collect::<Result<_, _>>()?
+        $e.next().map(TryInto::try_into).transpose()?
     };
 
     (? $p:pat, $e:expr) => {
@@ -13,6 +13,8 @@ macro_rules! describe {
                 .map(TryInto::try_into)
                 .collect::<Result<_, _>>()?
                 .unwrap()
+        } else {
+            None
         }
     };
 

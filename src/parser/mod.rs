@@ -1,5 +1,5 @@
-pub mod error;
 pub mod ast;
+pub mod error;
 
 pub type Result<T> = std::result::Result<T, error::ParseError>;
 
@@ -19,7 +19,7 @@ pub fn parse(source: &str) -> Result<Vec<Statement>> {
 
     for pair in pairs.next().unwrap().into_inner() {
         if pair.as_rule() != Rule::EOI {
-            // statements.push();
+            statements.push(pair.try_into()?);
         }
     }
 

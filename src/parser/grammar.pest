@@ -9,6 +9,13 @@ path = {
     identifier ~ ("::" ~ identifier)*
 }
 
+// ======================================================
+// LEXICAL
+// ======================================================
+
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT    = _{ "//" ~ (!"\n" ~ ANY)* }
+
 // ------------------------------------------------------
 // PRIMITIVES
 // ------------------------------------------------------
@@ -82,8 +89,12 @@ block = {
 // FUNCTION
 // ------------------------------------------------------
 
-fn_params = _{
-    (type_expr ~ identifier)+ ~ ","?
+fn_param = {
+    type_expr ~ identifier
 }
 
-fn_decl = { type_expr ~ identifier ~ "(" ~ fn_params? ~ ")" ~ (";" | block) }
+fn_params = {
+    (fn_param+ ~ ","?)?
+}
+
+fn_decl = { type_expr ~ identifier ~ "(" ~ fn_params ~ ")" ~ (";" | block) }

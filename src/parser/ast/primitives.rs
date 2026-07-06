@@ -1,16 +1,6 @@
 use crate::{
-    ast::primitives::{Identifier, Path},
-    describe, ensure, impl_ast,
-    parser::Rule,
+    ast::primitives::{Identifier, Path, TypeExpr}, describe, ensure, impl_ast, parser::Rule,
 };
-
-pub enum TypeExpr {
-    Path(Path),
-    Ref(Box<TypeExpr>),
-    Ptr(Box<TypeExpr>),
-    Fn(Box<TypeExpr>, Vec<TypeExpr>),
-    Array(Box<TypeExpr>, Option<i32>),
-}
 
 impl_ast! {Identifier => pair {
     ensure!(pair, Rule::identifier);
