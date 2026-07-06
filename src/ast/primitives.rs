@@ -1,6 +1,6 @@
-pub struct Identifier(String);
+pub struct Identifier(pub String);
 
-pub struct Path(Vec<Identifier>);
+pub struct Path(pub Vec<Identifier>);
 
 pub enum TypeExpr {
     Path(Path),

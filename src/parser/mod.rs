@@ -1,4 +1,5 @@
 pub mod error;
+pub mod ast;
 
 pub type Result<T> = std::result::Result<T, error::ParseError>;
 
