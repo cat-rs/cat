@@ -2,5 +2,6 @@ mod ast;
 mod parser;
 
 fn main() {
-    println!("Hello, world!");
+    let statements = parser::parse("int main() {}").unwrap();
+    println!("{:?}", statements);
 }

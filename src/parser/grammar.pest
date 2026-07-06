@@ -1,5 +1,5 @@
 // Program
-program = { SOI ~ statement ~ EOI }
+program = { SOI ~ statement* ~ EOI }
 
 keyword = {
     "fn"
