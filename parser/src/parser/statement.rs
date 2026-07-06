@@ -1,7 +1,7 @@
 use crate::{
+    Rule,
     ast::statement::{Block, Statement, VarDecl},
     describe, ensure, impl_ast,
-    parser::Rule,
 };
 
 impl_ast! {VarDecl => pair {

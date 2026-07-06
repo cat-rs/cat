@@ -6,6 +6,13 @@ version = 4
 name = "cat"
 version = "0.1.0"
 dependencies = [
+ "cat-parser",
+]
+
+[[package]]
+name = "cat-parser"
+version = "0.1.0"
+dependencies = [
  "pest",
  "pest_derive",
 ]

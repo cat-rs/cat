@@ -1,13 +1,9 @@
-use crate::code::CodeGen;
-
-mod ast;
-mod code;
-mod parser;
+use cat_parser::code::CodeGen;
 
 fn main() {
     let source = std::fs::read_to_string("cat/main.cat").expect("Failed to read src file");
 
-    let statements = parser::parse(&source).unwrap();
+    let statements = cat_parser::parse(&source).unwrap();
     let mut cg = CodeGen::new();
 
     cg.generate(statements);
