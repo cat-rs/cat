@@ -92,7 +92,7 @@ module_statement = _{
 // ------------------------------------------------------
 
 fn_params = {
-    (var_decl+ ~ ","?)?
+    (var_decl ~ ("," ~ var_decl)* ~ ","?)?
 }
 
 fn_decl = { type_expr ~ identifier ~ "(" ~ fn_params ~ ")" ~ (";" | block) }

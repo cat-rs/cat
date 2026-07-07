@@ -1,4 +1,4 @@
-int main(int argv int[] args) {
+int main(int argv, int[] args) {
     hello();
 }
 
