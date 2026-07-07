@@ -1,0 +1,13 @@
+[package]
+name = "cat"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+cat-parser = { workspace = true }
+
+[workspace]
+members = ["parser"]
+
+[workspace.dependencies]
+cat-parser = { path = "parser", version = "0.1.0" }

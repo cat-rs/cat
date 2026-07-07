@@ -1,0 +1,167 @@
+// Program
+program = { SOI ~ statement* ~ EOI }
+
+keyword = {
+    "fn"
+}
+
+path = {
+    identifier ~ ("::" ~ identifier)*
+}
+
+// ======================================================
+// LEXICAL
+// ======================================================
+
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+COMMENT    = _{ "//" ~ (!"\n" ~ ANY)* }
+
+// ------------------------------------------------------
+// PRIMITIVES
+// ------------------------------------------------------
+
+identifier = @{
+    !(keyword ~ !(ASCII_ALPHANUMERIC | "_")) ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")*
+}
+
+integer = @{ ASCII_DIGIT+ }
+
+float = @{
+    ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+
+}
+
+boolean = {
+    "true"
+  | "false"
+}
+
+string_lit = {
+    "\"" ~ inner_str ~ "\""
+}
+
+inner_str = @{
+    (!"\"" ~ ("\\\"" | ANY))*
+}
+
+// ------------------------------------------------------
+// TYPES
+// ------------------------------------------------------
+path_type = {
+    path
+}
+
+ptr_type = {
+    "*"
+}
+
+ref_type = {
+    "&"
+}
+
+fn_type = {
+    "(" ~ (type_expr ~ ("," ~ type_expr)*)? ~ ")"
+}
+
+array_type = {
+    "[" ~ integer? ~ "]"
+}
+
+type_expr = {
+    path_type ~ (ptr_type | ref_type | fn_type | array_type)*
+}
+
+// ------------------------------------------------------
+// STATEMENTS
+// ------------------------------------------------------
+statement = {
+    module_statement
+  | (expression ~ ";")
+}
+
+block = {
+    "{" ~ statement* ~ "}"
+}
+
+module_statement = _{
+    fn_decl
+  | struct_decl
+}
+
+// ------------------------------------------------------
+// FUNCTION
+// ------------------------------------------------------
+
+fn_params = {
+    (var_decl+ ~ ","?)?
+}
+
+fn_decl = { type_expr ~ identifier ~ "(" ~ fn_params ~ ")" ~ (";" | block) }
+
+// ------------------------------------------------------
+// STRUCT
+// ------------------------------------------------------
+
+struct_decl = { "struct" ~ identifier ~ "{" ~ (var_decl ~ ";")* ~ "}" }
+
+// ------------------------------------------------------
+// VARIABLE
+// ------------------------------------------------------
+var_decl = {
+    type_expr ~ identifier
+}
+
+// ------------------------------------------------------
+// EXPRESSION
+// ------------------------------------------------------
+expression = {
+    term ~ binary_operation*
+}
+
+primary = _{
+    path
+  | string_lit
+  | float
+  | integer
+  | boolean
+}
+
+// ------------------------------------------------------
+// TERM
+// ------------------------------------------------------
+
+term = _{
+    primary_term
+  | ref_term
+}
+
+primary_term = {
+    primary ~ suffix*
+}
+
+ref_term = {
+    "&" ~ term
+}
+
+// ------------------------------------------------------
+// BINARY OPERATOR
+// ------------------------------------------------------
+
+binary_operation = {
+    binary_operator ~ term
+}
+
+binary_operator = {
+    "="
+}
+
+// ------------------------------------------------------
+// SUFFIX
+// ------------------------------------------------------
+
+suffix = _{
+    call_sx
+}
+
+call_sx = {
+    "(" ~ (expression ~ ("," ~ expression)* ~ ","?)? ~ ")"
+}
