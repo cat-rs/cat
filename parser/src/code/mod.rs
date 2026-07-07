@@ -1,14 +1,21 @@
+pub mod expression;
 pub mod primitives;
 pub mod statement;
-pub mod expression;
 
-use crate::ast::statement::Statement;
+use std::collections::HashMap;
+
+use crate::ast::{primitives::TypeExpr, statement::Statement};
 
 pub trait Generate {
     fn generate(&self, cg: &mut CodeGen);
 }
 
+pub struct PreGen {
+    pub type_defs: HashMap<TypeExpr, usize>,
+}
+
 pub struct CodeGen {
+    pub pre: PreGen,
     pub output: String,
     pub indent: usize,
 }
@@ -16,6 +23,9 @@ pub struct CodeGen {
 impl CodeGen {
     pub fn new() -> Self {
         Self {
+            pre: PreGen {
+                type_defs: HashMap::new(),
+            },
             output: String::new(),
             indent: 0,
         }
@@ -46,6 +56,16 @@ impl<T: Generate> Generate for Option<T> {
         if let Some(v) = self {
             v.generate(cg);
         }
+    }
+}
+
+impl PreGen {
+    pub fn type_def(&mut self, ty: TypeExpr) -> String {
+        let len = self.type_defs.len();
+
+        let id = self.type_defs.entry(ty).or_insert(len);
+
+        format!("_cat_ty_{id}")
     }
 }
 

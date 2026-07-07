@@ -25,11 +25,14 @@ impl Generate for Path {
 impl Generate for TypeExpr {
     fn generate(&self, cg: &mut super::CodeGen) {
         match self {
-            TypeExpr::Array(t, _) => t.generate(cg),
-            TypeExpr::Fn(t, _) => t.generate(cg),
             TypeExpr::Path(p) => p.generate(cg),
             TypeExpr::Ptr(t) => generate!(cg, #t "*"),
             TypeExpr::Ref(t) => generate!(cg, #t "&"),
+
+            ty @ (TypeExpr::Array(_, _) | TypeExpr::Fn(_, _)) => {
+                let def = cg.pre.type_def(ty.clone());
+                cg.add(&def)
+            }
         }
     }
 }
