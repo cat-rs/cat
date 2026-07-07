@@ -42,9 +42,9 @@ impl Generate for Statement {
 
                     #param
                 } ")" if (let Some(body) = body) {
-                    " " #body
+                    " " #body "\n\n"
                 } else {
-                    ";"
+                    ";\n\n"
                 })
             }
 
