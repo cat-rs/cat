@@ -116,7 +116,7 @@ expression = {
     term ~ (bin_op ~ term)*
 }
 
-primary = {
+primary = _{
     path
   | string_lit
   | float

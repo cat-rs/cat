@@ -1,5 +1,6 @@
 pub mod primitives;
 pub mod statement;
+pub mod expression;
 
 #[macro_export]
 macro_rules! describe {
@@ -56,7 +57,21 @@ macro_rules! impl_ast {
                 let mut $n = pair.into_inner();
 
                 match rule {
-                    $( $r => $e ),*
+                    $( $r => $e, )*
+
+                    _ => Err(crate::error::ParseError {})
+                }
+            }
+        }
+    };
+
+    ($(<$($g:ty),*>)? $p:ty; => $n:ident; $($r:pat => $e:expr)*) => {
+        impl$(<$($g),*>)? TryFrom<pest::iterators::Pair<'_, crate::Rule>> for $p {
+            type Error = crate::error::ParseError;
+
+            fn try_from($n: pest::iterators::Pair<'_, crate::Rule>) -> Result<Self, Self::Error> {
+                match $n.as_rule() {
+                    $( $r => $e, )*
 
                     _ => Err(crate::error::ParseError {})
                 }
