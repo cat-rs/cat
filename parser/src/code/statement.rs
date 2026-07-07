@@ -13,7 +13,7 @@ impl Generate for Block {
                     /i #stmt "\n"
                 }
                 /i-
-            "}"
+            /i "}"
         )
     }
 }
@@ -56,7 +56,13 @@ impl Generate for Statement {
 
             Statement::Expression(expr) => {
                 expr.generate(cg);
-                cg.add(";\n");
+                cg.add(";");
+            }
+
+            Statement::VarDecl { decl, init } => {
+                generate!(cg, #decl if (let Some(init) = init) {
+                    " = " #init
+                } ";")
             }
         }
     }

@@ -75,6 +75,7 @@ type_expr = {
 // ------------------------------------------------------
 statement = {
     module_statement
+  | var_decl_statement
   | (expression ~ ";")
 }
 
@@ -106,6 +107,11 @@ struct_decl = { "struct" ~ identifier ~ "{" ~ (var_decl ~ ";")* ~ "}" }
 // ------------------------------------------------------
 // VARIABLE
 // ------------------------------------------------------
+
+var_decl_statement = {
+    var_decl ~ ("=" ~ expression)? ~ ";"
+}
+
 var_decl = {
     type_expr ~ identifier
 }

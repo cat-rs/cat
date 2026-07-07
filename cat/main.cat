@@ -1,5 +1,4 @@
 int main(int argv, int[] args) {
-    hello();
+    int* a;
+    int[] b;
 }
-
-char[]& get_chars() {}

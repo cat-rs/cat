@@ -45,6 +45,13 @@ impl_ast! {Statement; pair => inner;
         })
     }
 
+    Rule::var_decl_statement => {
+        Ok(Statement::VarDecl {
+            decl: inner.next().unwrap().try_into()?,
+            init: describe!(?inner),
+        })
+    }
+
     Rule::expression => {
         Expression::try_from(pair).map(Statement::Expression)
     }
