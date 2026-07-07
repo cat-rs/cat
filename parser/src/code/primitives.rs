@@ -27,7 +27,7 @@ impl Generate for TypeExpr {
         match self {
             TypeExpr::Path(p) => p.generate(cg),
             TypeExpr::Ptr(t) => generate!(cg, #t "*"),
-            TypeExpr::Ref(t) => generate!(cg, #t "&"),
+            TypeExpr::Ref(t) => generate!(cg, #t "*"),
 
             ty @ (TypeExpr::Array(_, _) | TypeExpr::Fn(_, _)) => {
                 let def = cg.pre.type_def(ty.clone());
@@ -66,7 +66,14 @@ impl PreGen {
         for (ty, i) in &self.type_defs {
             match ty {
                 TypeExpr::Array(ty, len) => {
-                    generate!(cg, "typedef struct { " #ty " arr" "[" #len "]; }" " _cat_ty_" #i ";\n")
+                    generate!(cg, "typedef struct { \n"
+                        /i+
+                        if (len.is_none()) {
+                            /i "size_t len;\n"
+                        }
+                        /i #ty " arr" "[" #len "];\n"
+                        /i-
+                        "} _cat_ty_" #i ";\n")
                 }
                 TypeExpr::Fn(ty, args) => {
                     generate!(cg, "typedef " #ty " (*_cat_ty_" #i ")" "("
