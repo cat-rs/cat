@@ -59,12 +59,14 @@ impl PreGen {
     pub fn generate_types(&self) -> String {
         let mut _cg = super::CodeGen::new();
 
+        _cg.pre.shift += self.shift + self.type_defs.len();
+
         let cg = &mut _cg;
 
         for (ty, i) in &self.type_defs {
             match ty {
                 TypeExpr::Array(ty, len) => {
-                    generate!(cg, "typedef " #ty " _cat_ty_" #i "[" #len "]:")
+                    generate!(cg, "typedef struct { " #ty " arr" "[" #len "]; }" " _cat_ty_" #i ";\n")
                 }
                 TypeExpr::Fn(ty, args) => {
                     generate!(cg, "typedef " #ty " (*_cat_ty_" #i ")" "("
@@ -72,12 +74,16 @@ impl PreGen {
                             if (i > 0) { ", " }
                             #arg
                         }
-                    "):")
+                    ");\n")
                 }
-                _ => generate!(cg, "typedef " #ty " _cat_ty_" #i ";"),
+                _ => generate!(cg, "typedef " #ty " _cat_ty_" #i ";\n"),
             }
         }
 
-        _cg.output
+        if !cg.pre.type_defs.is_empty() {
+            cg.pre.generate_types() + &cg.output
+        } else {
+            _cg.output
+        }
     }
 }

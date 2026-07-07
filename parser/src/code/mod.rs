@@ -11,6 +11,7 @@ pub trait Generate {
 }
 
 pub struct PreGen {
+    pub shift: usize,
     pub type_defs: HashMap<TypeExpr, usize>,
 }
 
@@ -24,6 +25,7 @@ impl CodeGen {
     pub fn new() -> Self {
         Self {
             pre: PreGen {
+                shift: 0,
                 type_defs: HashMap::new(),
             },
             output: String::new(),
@@ -63,7 +65,7 @@ impl PreGen {
     pub fn type_def(&mut self, ty: TypeExpr) -> String {
         let len = self.type_defs.len();
 
-        let id = self.type_defs.entry(ty).or_insert(len);
+        let id = self.type_defs.entry(ty).or_insert(len + self.shift);
 
         format!("_cat_ty_{id}")
     }
