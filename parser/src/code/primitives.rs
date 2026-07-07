@@ -29,9 +29,13 @@ impl Generate for TypeExpr {
             TypeExpr::Ptr(t) => generate!(cg, #t "*"),
             TypeExpr::Ref(t) => generate!(cg, #t "*"),
 
-            ty @ (TypeExpr::Array(_, _) | TypeExpr::Fn(_, _)) => {
+            ty @ (TypeExpr::Array(_, Some(_)) | TypeExpr::Fn(_, _)) => {
                 let def = cg.pre.type_def(ty.clone());
                 cg.add(&def)
+            }
+
+            TypeExpr::Array(ty, None) => {
+                generate!(cg, #ty "*")
             }
         }
     }
@@ -66,14 +70,7 @@ impl PreGen {
         for (ty, i) in &self.type_defs {
             match ty {
                 TypeExpr::Array(ty, len) => {
-                    generate!(cg, "typedef struct { \n"
-                        /i+
-                        if (len.is_none()) {
-                            /i "size_t len;\n"
-                        }
-                        /i #ty " arr" "[" #len "];\n"
-                        /i-
-                        "} _cat_ty_" #i ";\n")
+                    generate!(cg, "typedef " #ty " _cat_ty_" #i "[" #len "];\n")
                 }
                 TypeExpr::Fn(ty, args) => {
                     generate!(cg, "typedef " #ty " (*_cat_ty_" #i ")" "("
