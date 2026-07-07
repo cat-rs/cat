@@ -1,6 +1,9 @@
 use crate::{
     Rule,
-    ast::statement::{Block, Statement, VarDecl},
+    ast::{
+        expression::Expression,
+        statement::{Block, Statement, VarDecl},
+    },
     describe, ensure, impl_ast,
 };
 
@@ -21,7 +24,7 @@ impl_ast! {Block => pair {
     Ok(Block(describe!(pair.into_inner())))
 }}
 
-impl_ast! {Statement; inner;
+impl_ast! {Statement; pair => inner;
     Rule::statement => {
         inner.next().unwrap().try_into()
     }
@@ -40,5 +43,9 @@ impl_ast! {Statement; inner;
             name: inner.next().unwrap().try_into()?,
             fields: describe!(inner)
         })
+    }
+
+    Rule::expression => {
+        Expression::try_from(pair).map(Statement::Expression)
     }
 }
