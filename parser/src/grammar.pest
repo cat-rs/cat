@@ -114,7 +114,7 @@ var_decl = {
 // EXPRESSION
 // ------------------------------------------------------
 expression = {
-    term ~ (bin_op ~ term)*
+    term ~ binary_operation*
 }
 
 primary = _{
@@ -146,7 +146,11 @@ ref_term = {
 // BINARY OPERATOR
 // ------------------------------------------------------
 
-bin_op = {
+binary_operation = {
+    binary_operator ~ term
+}
+
+binary_operator = {
     "="
 }
 

@@ -33,3 +33,9 @@ impl Generate for TypeExpr {
         }
     }
 }
+
+impl Generate for String {
+    fn generate(&self, cg: &mut super::CodeGen) {
+        cg.add(self);
+    }
+}

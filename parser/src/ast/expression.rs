@@ -10,6 +10,7 @@ pub enum Expression {
     },
     BinaryOP {
         lhs: Box<Expression>,
+        op: String,
         rhs: Box<Expression>,
     },
 }

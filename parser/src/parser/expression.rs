@@ -12,7 +12,23 @@ impl_ast! {Primary; => pair;
     Rule::string_lit => Ok(Primary::String(pair.into_inner().as_str().to_string()))
 }
 
-impl_ast! {Expression; inner;
+impl_ast! {Expression; pair => inner;
+    Rule::expression => {
+        let mut expr = Expression::try_from(inner.next().unwrap())?;
+
+        for bin_op in inner {
+            let mut bin_op_inner = bin_op.into_inner();
+
+            expr = Expression::BinaryOP {
+                lhs: Box::new(expr),
+                op: bin_op_inner.next().unwrap().to_string(),
+                rhs: Box::new(Expression::try_from(bin_op_inner.next().unwrap())?),
+            };
+        }
+
+        Ok(expr)
+    }
+
     Rule::primary_term => {
         let mut expr = Expression::Primary(Primary::try_from(inner.next().unwrap())?);
 
@@ -33,4 +49,6 @@ impl_ast! {Expression; inner;
 
         Ok(expr)
     }
+
+    Rule::ref_term => Expression::try_from(pair).map(Box::new).map(Expression::Ref)
 }

@@ -9,7 +9,7 @@ impl Generate for Expression {
         match self {
             Expression::Primary(primary) => primary.generate(cg),
             Expression::Ref(expr) => generate!(cg, "&" #expr),
-            Expression::BinaryOP { lhs, rhs } => generate!(cg, #lhs " " #rhs),
+            Expression::BinaryOP { lhs, op, rhs } => generate!(cg, #lhs #op #rhs),
             Expression::Call { target, args } => {
                 generate!(cg, #target "(" for (i, arg) in (args.iter().enumerate()) {
                     if (i > 0) { ", " }

@@ -78,4 +78,20 @@ macro_rules! impl_ast {
             }
         }
     };
+
+    ($(<$($g:ty),*>)? $p:ty; $n:ident => $n1:ident; $($r:pat => $e:expr)*) => {
+        impl$(<$($g),*>)? TryFrom<pest::iterators::Pair<'_, crate::Rule>> for $p {
+            type Error = crate::error::ParseError;
+
+            fn try_from($n: pest::iterators::Pair<'_, crate::Rule>) -> Result<Self, Self::Error> {
+                let mut $n1 = $n.clone().into_inner();
+
+                match $n.as_rule() {
+                    $( $r => $e, )*
+
+                    _ => Err(crate::error::ParseError {})
+                }
+            }
+        }
+    };
 }
