@@ -8,5 +8,7 @@ fn main() {
 
     cg.generate(statements);
 
-    println!("{}", cg.output)
+    let pre_output = cg.pre.generate();
+
+    println!("{}\n{}", pre_output, cg.output)
 }

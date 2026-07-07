@@ -1,7 +1,5 @@
 use crate::{
-    ast::primitives::{Identifier, Path, TypeExpr},
-    code::Generate,
-    generate,
+    ast::primitives::{Identifier, Path, TypeExpr}, code::{Generate, PreGen}, generate,
 };
 
 impl Generate for Identifier {
@@ -40,5 +38,27 @@ impl Generate for TypeExpr {
 impl Generate for String {
     fn generate(&self, cg: &mut super::CodeGen) {
         cg.add(self);
+    }
+}
+
+impl Generate for usize {
+    fn generate(&self, cg: &mut super::CodeGen) {
+        cg.add(&self.to_string());
+    }
+}
+
+impl PreGen {
+    pub fn generate_types(&self) -> String {
+        let mut _cg = super::CodeGen::new();
+
+        let cg = &mut _cg;
+
+        for (ty, i) in &self.type_defs {
+            match ty {
+                _ => generate!(cg, "typedef " #ty " _cat_ty_" #i ";"),
+            }
+        }
+
+        _cg.output
     }
 }

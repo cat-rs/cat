@@ -67,6 +67,10 @@ impl PreGen {
 
         format!("_cat_ty_{id}")
     }
+
+    pub fn generate(&self) -> String {
+        self.generate_types()
+    }
 }
 
 #[macro_export]
@@ -84,18 +88,18 @@ macro_rules! generate {
 
     ($cg:expr, if (let $pat:pat = $expr:expr) { $($inner:tt)* } else { $($else:tt)* } $($rest:tt)*) => {{
         if let $pat = $expr {
-            generate!($cg, $($inner)*);
+            $crate::generate!($cg, $($inner)*);
         } else {
-            generate!($cg, $($else)*);
+            $crate::generate!($cg, $($else)*);
         }
-        generate!($cg, $($rest)*);
+        $crate::generate!($cg, $($rest)*);
     }};
 
     ($cg:expr, if ($e:expr) { $($inner:tt)* } else { $($else:tt)* }  $($rest:tt)*) => {{
         if $e {
             $crate::generate!($cg, $($inner)*);
         } else {
-            generate!($cg, $($else)*);
+            $crate::generate!($cg, $($else)*);
         }
 
         $crate::generate!($cg, $($rest)*);
@@ -103,10 +107,10 @@ macro_rules! generate {
 
     ($cg:expr, if (let $pat:pat = $expr:expr) { $($inner:tt)* } $($rest:tt)*) => {{
         if let $pat = $expr {
-            generate!($cg, $($inner)*);
+            $crate::generate!($cg, $($inner)*);
         }
 
-        generate!($cg, $($rest)*);
+        $crate::generate!($cg, $($rest)*);
     }};
 
     ($cg:expr, if ($e:expr) { $($inner:tt)* }  $($rest:tt)*) => {{
