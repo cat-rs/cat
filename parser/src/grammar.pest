@@ -75,6 +75,7 @@ type_expr = {
 // ------------------------------------------------------
 statement = {
     module_statement
+  | (expression ~ ";")
 }
 
 block = {

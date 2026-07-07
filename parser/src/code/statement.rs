@@ -47,10 +47,16 @@ impl Generate for Statement {
                     ";"
                 })
             }
+
             Statement::StructDeclaration { name, fields } => {
                 generate!(cg, "struct " #name for param in (fields) {
                     #param ";\n"
                 })
+            }
+
+            Statement::Expression(expr) => {
+                expr.generate(cg);
+                cg.add(";\n");
             }
         }
     }

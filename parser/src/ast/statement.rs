@@ -1,4 +1,7 @@
-use crate::ast::primitives::{Identifier, TypeExpr};
+use crate::ast::{
+    expression::Expression,
+    primitives::{Identifier, TypeExpr},
+};
 
 #[derive(Debug, Clone, Default)]
 pub struct Block(pub Vec<Statement>);
@@ -22,4 +25,6 @@ pub enum Statement {
         name: Identifier,
         fields: Vec<VarDecl>,
     },
+
+    Expression(Expression),
 }
