@@ -15,7 +15,7 @@ use crate::ast::statement::Statement;
 struct CatParser;
 
 pub fn parse(source: &str) -> Result<Vec<Statement>> {
-    let mut pairs = CatParser::parse(Rule::program, source).map_err(|_| error::ParseError {})?;
+    let mut pairs = CatParser::parse(Rule::program, source).map_err(error::ParseError::Pest)?;
 
     let mut statements = vec![];
 

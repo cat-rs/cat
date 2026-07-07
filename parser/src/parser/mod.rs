@@ -1,6 +1,6 @@
+pub mod expression;
 pub mod primitives;
 pub mod statement;
-pub mod expression;
 
 #[macro_export]
 macro_rules! describe {
@@ -28,7 +28,11 @@ macro_rules! describe {
 macro_rules! ensure {
     ($pair:expr, $r:pat) => {
         if !matches!($pair.as_rule(), $r) {
-            return Err(crate::error::ParseError {});
+            return Err(crate::error::ParseError::String(format!(
+                "BUG (Ensure): expected ({}), found {:?}",
+                stringify!($r),
+                $pair.as_rule()
+            )))?;
         }
     };
 }
@@ -59,7 +63,9 @@ macro_rules! impl_ast {
                 match rule {
                     $( $r => $e, )*
 
-                    _ => Err(crate::error::ParseError {})
+                    _ => Err(crate::error::ParseError::String(
+                        format!("BUG: Unimplemented rule for {}: {:?}", stringify!($p), rule),
+                    ))?,
                 }
             }
         }
@@ -73,7 +79,9 @@ macro_rules! impl_ast {
                 match $n.as_rule() {
                     $( $r => $e, )*
 
-                    _ => Err(crate::error::ParseError {})
+                    _ => Err(crate::error::ParseError::String(
+                        format!("BUG: Unimplemented rule for {}: {:?}", stringify!($p), $n.as_rule()),
+                    ))?,
                 }
             }
         }
@@ -89,7 +97,9 @@ macro_rules! impl_ast {
                 match $n.as_rule() {
                     $( $r => $e, )*
 
-                    _ => Err(crate::error::ParseError {})
+                    _ => Err(crate::error::ParseError::String(
+                        format!("BUG: Unimplemented rule for {}: {:?}", stringify!($p), $n.as_rule()),
+                    ))?,
                 }
             }
         }

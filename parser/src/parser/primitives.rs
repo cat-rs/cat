@@ -1,7 +1,5 @@
 use crate::{
-    Rule,
-    ast::primitives::{Identifier, Path, TypeExpr},
-    describe, ensure, impl_ast,
+    Rule, ast::primitives::{Identifier, Path, TypeExpr}, describe, emit, ensure, impl_ast,
 };
 
 impl_ast! {Identifier => pair {
@@ -43,13 +41,13 @@ impl_ast! {TypeExpr; inner;
                         px_inner
                             .next()
                             .map(|v| {
-                                v.as_str().parse().map_err(|_| crate::error::ParseError {})
+                                v.as_str().parse().map_err(|_| crate::error::ParseError::String(format!("Failed to parse int")))
                             })
                             .transpose()?,
                     )
                 }
 
-                _ => Err(crate::error::ParseError {})?,
+                _ => emit!(impl "TypeExpr (ref_pair)", ref_pair.as_rule())?,
             }
         }
 

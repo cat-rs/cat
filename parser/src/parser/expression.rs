@@ -43,7 +43,9 @@ impl_ast! {Expression; pair => inner;
                     };
                 }
 
-                _ => Err(crate::error::ParseError {})?,
+                _ => Err(crate::error::ParseError::String(
+                    format!("Invalid suffix: {:?}", suffix.as_rule()),
+                ))?,
             }
         }
 
