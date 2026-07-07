@@ -32,7 +32,7 @@ impl_ast! {TypeExpr; inner;
                 }
 
                 Rule::fn_type => {
-                    ty = TypeExpr::Fn(Box::new(ty), describe!(px_inner.next().unwrap().into_inner()));
+                    ty = TypeExpr::Fn(Box::new(ty), describe!(px_inner));
                 }
 
                 Rule::array_type => {
