@@ -1,14 +1,22 @@
+pub mod expression;
 pub mod primitives;
 pub mod statement;
-pub mod expression;
 
-use crate::ast::statement::Statement;
+use std::collections::HashMap;
+
+use crate::ast::{primitives::TypeExpr, statement::Statement};
 
 pub trait Generate {
     fn generate(&self, cg: &mut CodeGen);
 }
 
+pub struct PreGen {
+    pub shift: usize,
+    pub type_defs: HashMap<TypeExpr, usize>,
+}
+
 pub struct CodeGen {
+    pub pre: PreGen,
     pub output: String,
     pub indent: usize,
 }
@@ -16,6 +24,10 @@ pub struct CodeGen {
 impl CodeGen {
     pub fn new() -> Self {
         Self {
+            pre: PreGen {
+                shift: 0,
+                type_defs: HashMap::new(),
+            },
             output: String::new(),
             indent: 0,
         }
@@ -49,6 +61,20 @@ impl<T: Generate> Generate for Option<T> {
     }
 }
 
+impl PreGen {
+    pub fn type_def(&mut self, ty: TypeExpr) -> String {
+        let len = self.type_defs.len();
+
+        let id = self.type_defs.entry(ty).or_insert(len + self.shift);
+
+        format!("_cat_ty_{id}")
+    }
+
+    pub fn generate(&self) -> String {
+        self.generate_types()
+    }
+}
+
 #[macro_export]
 macro_rules! generate {
     ($cg:expr, #$($i:ident).+ $($rest:tt)*) => {{
@@ -64,18 +90,18 @@ macro_rules! generate {
 
     ($cg:expr, if (let $pat:pat = $expr:expr) { $($inner:tt)* } else { $($else:tt)* } $($rest:tt)*) => {{
         if let $pat = $expr {
-            generate!($cg, $($inner)*);
+            $crate::generate!($cg, $($inner)*);
         } else {
-            generate!($cg, $($else)*);
+            $crate::generate!($cg, $($else)*);
         }
-        generate!($cg, $($rest)*);
+        $crate::generate!($cg, $($rest)*);
     }};
 
     ($cg:expr, if ($e:expr) { $($inner:tt)* } else { $($else:tt)* }  $($rest:tt)*) => {{
         if $e {
             $crate::generate!($cg, $($inner)*);
         } else {
-            generate!($cg, $($else)*);
+            $crate::generate!($cg, $($else)*);
         }
 
         $crate::generate!($cg, $($rest)*);
@@ -83,10 +109,10 @@ macro_rules! generate {
 
     ($cg:expr, if (let $pat:pat = $expr:expr) { $($inner:tt)* } $($rest:tt)*) => {{
         if let $pat = $expr {
-            generate!($cg, $($inner)*);
+            $crate::generate!($cg, $($inner)*);
         }
 
-        generate!($cg, $($rest)*);
+        $crate::generate!($cg, $($rest)*);
     }};
 
     ($cg:expr, if ($e:expr) { $($inner:tt)* }  $($rest:tt)*) => {{

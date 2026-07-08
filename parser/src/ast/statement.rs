@@ -27,4 +27,9 @@ pub enum Statement {
     },
 
     Expression(Expression),
+
+    VarDecl {
+        decl: VarDecl,
+        init: Option<Expression>,
+    },
 }

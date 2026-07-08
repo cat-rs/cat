@@ -1,10 +1,10 @@
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Identifier(pub String);
 
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Path(pub Vec<Identifier>);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 
 pub enum TypeExpr {
     Path(Path),

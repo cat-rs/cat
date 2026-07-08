@@ -1,3 +1,4 @@
-int main() {
-    hello();
+int main(int argv, int[] args) {
+    int* a;
+    int[] b;
 }
